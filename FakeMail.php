@@ -11,7 +11,8 @@
 
 <?php
 session_start();
-if (filter_var($_POST['Submit'],FILTER_SANITIZE_STRING) == 'Send')
+$f_Submit = filter_var($_POST['submit'],FILTER_SANITIZE_STRING);
+if ($f_Submit == 'Send')
 {
 if (strcmp(md5(filter_var($_POST['user_code'],FILTER_SANITIZE_STRING)),$_SESSION['ckey']))
     { 
@@ -53,7 +54,7 @@ exit();
     $headers = 'From:'.$f_fromname.' '.'<'.$f_fromemail.'>'. "\r\n";
     $headers .= 'Bcc: '.$f_bccemail. "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
-    
+/*
 // Create a boundary so we know where to look for
 // the start of the data
     $boundary = uniqid("HTMLEMAIL"); 
@@ -73,15 +74,19 @@ exit();
                 "Content-Transfer-Encoding: base64\r\n\r\n"; 
                 
     $headers .= chunk_split(base64_encode($f_message)); 
-
+*/
 // And then send the email ....
 while ($f_clno >= 1) {
-  mail($f_toemail,$f_subject,"",$headers,'-f'.$f_reply);
+  $Sent=mail($f_toemail,$f_subject,$f_message,$headers,'-f'.$f_reply);
   sleep(0);
   $f_clno--;
 }
+if($Sent){
+    $header = "Location: ".basename ( __FILE__,"php")."php?msg= Mail Sent.";
+} else {
+    $header = "Location: ".basename ( __FILE__,"php")."php?msg= Error: Mail Function is disabled.";
+}
 
-$header = "Location: ".basename ( __FILE__,"php")."php?msg= Mail Sent.";
 header($header);
 exit();
 }
@@ -145,7 +150,7 @@ exit();
 
      <label>
     	<span>&nbsp;</span> 
-        <input type="submit" class="button" name="Submit" value="Send" />
+        <input type="submit" class="button" name="submit" value="Send" />
     </label> 
 
 </form>
